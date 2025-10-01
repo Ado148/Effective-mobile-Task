@@ -35,9 +35,9 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|min:1|max:255',
             'description' => 'nullable|string',
-            'due_date' => 'nullable|date',
+            'due_date' => 'date',
             'status' => 'required|in:pending,in_progress,completed',
         ]);
 
@@ -57,14 +57,15 @@ class TaskController extends Controller
         }
 
         $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|nullable|string',
-            'due_date' => 'sometimes|nullable|date',
-            'status' => 'sometimes|required|in:pending,in_progress,completed',
+            'title' => 'sometimes|string|min:1|max:255',
+            'description' => 'sometimes|nullable|string', // sometimes means its optional
+            'due_date' => 'sometimes|date',
+            'status' => 'sometimes|in:pending,in_progress,completed',
         ]);
 
         $task->update($validated);
-        return new TaskResource($task);
+       // return new TaskResource($task);
+       return response()->json(['message' => 'Task updated!']); 
     }
 
     /**
@@ -78,6 +79,6 @@ class TaskController extends Controller
         }
 
         $task->delete();
-        return response()->json(['message' => 'Task deleted']);
+        return response()->json(['message' => 'Task deleted!']);
     }
 }
